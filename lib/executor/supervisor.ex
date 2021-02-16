@@ -1,4 +1,5 @@
-defmodule Executor.Supervisor do
+defmodule Mandelbrot.Executor.Supervisor do
+  alias Mandelbrot.Executor
   use Supervisor
 
   def start_link() do

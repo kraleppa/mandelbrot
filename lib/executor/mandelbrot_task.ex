@@ -1,4 +1,4 @@
-defmodule Executor.MandelbrotTask do
+defmodule Mandelbrot.Executor.MandelbrotTask do
   def execute_task(points) do
     results = Enum.map(points, &process_point(&1)) |>
       Enum.map(&parse_tuple(&1))

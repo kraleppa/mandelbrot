@@ -1,4 +1,6 @@
-defmodule Executor.Scheduler do
+defmodule Mandelbrot.Executor.Scheduler do
+  alias Mandelbrot.Util.Chunker
+  alias Mandelbrot.Executor
   use GenServer
 
   def start_link(state) do
@@ -11,7 +13,7 @@ defmodule Executor.Scheduler do
 
   def handle_cast({:start_task, width, height, number_of_processes}, state) do
     points = (for x <- 1..width-1, y <- 1..height-1, do: {x, y})
-      |> Util.Chunker.chunk(number_of_processes)
+      |> Chunker.chunk(number_of_processes)
     run_tasks(points)
     {:noreply, state}
   end
@@ -21,7 +23,8 @@ defmodule Executor.Scheduler do
   end
 
   defp run_tasks([head | tail]) do
-    Task.Supervisor.start_child(Executor.TaskSupervisor, fn -> Executor.MandelbrotTask.execute_task(head) end)
+    Task.Supervisor.start_child(Executor.TaskSupervisor,
+      fn -> Executor.MandelbrotTask.execute_task(head) end)
     run_tasks(tail)
   end
 

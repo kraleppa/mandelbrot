@@ -1,4 +1,4 @@
-defmodule Util.Chunker do
+defmodule Mandelbrot.Util.Chunker do
   def chunk(list, parts), do: do_chunk(list, parts, [])
 
   defp do_chunk(_, 0, chunks), do: chunks
