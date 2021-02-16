@@ -7,6 +7,7 @@ defmodule Executor.Supervisor do
 
   def init(_) do
     children = [
+      {Task.Supervisor, name: Executor.TaskSupervisor},
       {Executor.Scheduler, []}
     ]
 

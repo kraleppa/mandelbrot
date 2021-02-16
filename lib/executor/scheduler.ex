@@ -21,8 +21,7 @@ defmodule Executor.Scheduler do
   end
 
   defp run_tasks([head | tail]) do
-    #start(head)
-    IO.inspect(head)
+    Task.Supervisor.start_child(Executor.TaskSupervisor, fn -> Executor.MandelbrotTask.execute_task(head) end)
     run_tasks(tail)
   end
 
