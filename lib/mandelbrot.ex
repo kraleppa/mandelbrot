@@ -36,4 +36,8 @@ defmodule Mandelbrot do
       iter
     end
   end
+
+  def start(_type, _args) do
+    Executor.Supervisor.start_link()
+  end
 end

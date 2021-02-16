@@ -1,25 +1,32 @@
 defmodule Executor.Scheduler do
   use GenServer
 
-  def start_link() do
-    GenServer.start_link(__MODULE__, nil, name: Executor.Scheduler)
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def init(_) do
-    {:ok, nil}
+  def init(state) do
+    {:ok, state}
   end
 
-  # zmienic na casta i przetwarzac asynchronicznie!
-  def handle_call({:start_task, width, height}, _from, state) do
-    # uruchom taski poczekaj na nie i zwróc w odpowiedzi
-    :timer.sleep(2000)
-    results = width + height
-    {:reply, results, state}
+  def handle_cast({:start_task, width, height, number_of_processes}, state) do
+    points = (for x <- 1..width-1, y <- 1..height-1, do: {x, y})
+      |> Util.Chunker.chunk(number_of_processes)
+    run_tasks(points)
+    {:noreply, state}
   end
 
-  def start_task(width, height) do
-    GenServer.call(Executor.Scheduler, {:start_task, width, height})
+  defp run_tasks([]) do
+    :ok
   end
 
+  defp run_tasks([head | tail]) do
+    #start(head)
+    IO.inspect(head)
+    run_tasks(tail)
+  end
 
+  def start_task(width, height, number_of_processes) do
+    GenServer.cast(__MODULE__, {:start_task, width, height, number_of_processes})
+  end
 end
