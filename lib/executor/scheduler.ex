@@ -12,23 +12,23 @@ defmodule Mandelbrot.Executor.Scheduler do
   end
 
   def handle_cast({:start_task, settings, socket}, state) do
-    run_tasks(split_points(settings), socket)
+    run_tasks(split_points(settings), settings, socket)
     {:noreply, state}
   end
 
-  defp run_tasks([], _) do
+  defp run_tasks([], _, _) do
     :ok
   end
 
-  defp run_tasks([head | tail], socket) do
+  defp run_tasks([head | tail], settings, socket) do
     Task.Supervisor.start_child(Executor.TaskSupervisor,
-      fn -> Executor.MandelbrotTask.execute_task(head, socket) end)
-    run_tasks(tail, socket)
+      fn -> Executor.MandelbrotTask.execute_task(head, settings, socket) end)
+    run_tasks(tail, settings, socket)
   end
 
-  defp split_points({width, height, number_of_processes}) do
-    (for x <- 1..width-1, y <- 1..height-1, do: {x, y})
-      |> Chunker.chunk(number_of_processes)
+  defp split_points(settings) do
+    (for x <- 1..settings.width-1, y <- 1..settings.height-1, do: {x, y})
+      |> Chunker.chunk(settings.number_of_processes)
   end
 
   def start_task(settings, socket) do

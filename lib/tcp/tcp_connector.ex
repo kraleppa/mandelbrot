@@ -1,6 +1,7 @@
 defmodule Mandelbrot.Tcp.TcpConnector do
   use GenServer
   require Logger
+  alias Mandelbrot.Tcp.Json.Settings
 
   def start_link(port) do
     GenServer.start_link(__MODULE__, port, name: __MODULE__)
@@ -21,7 +22,8 @@ defmodule Mandelbrot.Tcp.TcpConnector do
 
   def handle_info({:tcp, socket, data}, listenSocket) do
     Logger.info "Received #{data}"
-    Mandelbrot.Executor.Scheduler.start_task({800, 600, 4}, socket)
+    settings = %Settings{}
+    Mandelbrot.Executor.Scheduler.start_task(settings, socket)
 
     {:noreply, listenSocket}
   end

@@ -1,7 +1,7 @@
 defmodule Mandelbrot.Executor.MandelbrotTask do
-  def execute_task(points, socket) do
+  def execute_task(points, settings, socket) do
     # :timer.sleep(5000)
-    results = Enum.map(points, &process_point(&1)) |>
+    results = Enum.map(points, &process_point(&1, settings)) |>
       Enum.map(&parse_tuple(&1))
     :gen_tcp.send(socket, results)
   end
@@ -10,14 +10,11 @@ defmodule Mandelbrot.Executor.MandelbrotTask do
     Integer.to_string(x) <> " " <> Integer.to_string(y) <> " " <> Integer.to_string(z) <> "\n"
   end
 
-  defp process_point(point) do
+  defp process_point(point, settings) do
     max_iter = 570
-    zoom = 220
-    xPosition = 500
-    yPosition = 300
 
-    cX = (elem(point, 0) - xPosition) / zoom
-    cY = (elem(point, 1) - yPosition) / zoom
+    cX = (elem(point, 0) - settings.x_position) / settings.zoom
+    cY = (elem(point, 1) - settings.y_position) / settings.zoom
 
     iter = loop(cX, cY, 0, 0, max_iter)
     {elem(point, 0), elem(point, 1), iter}
