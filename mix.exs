@@ -14,7 +14,7 @@ defmodule Mandelbrot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {Mandelbrot, []},
+      mod: {Mandelbrot, 8080},
       extra_applications: [:logger]
     ]
   end
