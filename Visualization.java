@@ -1,7 +1,6 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import java.io.*;
 import java.net.*;
@@ -18,15 +17,9 @@ public class Visualization extends JFrame {
         I = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 
         new Thread(() -> {
+            Socket clientSocket;
             try{
-                // File file = new File("results.txt");
-                // BufferedReader br = new BufferedReader(new FileReader(file)); 
-                // String st; 
-                // while ((st = br.readLine()) != null) {
-                //     setRGB(st);
-                // } 
-                // br.close();
-                Socket clientSocket = new Socket("127.0.0.1", 8080);
+                clientSocket = new Socket("127.0.0.1", 8080);
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 out.println("{\"width\": 800,\"height\": 600, \"number_of_processes\":" + processNumber+", \"x_position\": 500,\"y_position\": 300, \"zoom\": 220}");
