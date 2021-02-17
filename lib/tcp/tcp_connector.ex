@@ -22,9 +22,17 @@ defmodule Mandelbrot.Tcp.TcpConnector do
 
   def handle_info({:tcp, socket, data}, listenSocket) do
     Logger.info "Received #{data}"
-    settings = %Settings{}
-    Mandelbrot.Executor.Scheduler.start_task(settings, socket)
+    try do
+      settings = Poison.decode!(data, as: %Settings{})
+      Mandelbrot.Executor.Scheduler.start_task(settings, socket)
+    rescue
+      Poison.ParseError -> Logger.error("Wrong JSON format")
+    end
 
     {:noreply, listenSocket}
   end
+
+
+  def handle_info({:tcp_closed, _}, state), do: {:stop, :normal, state}
+  def handle_info({:tcp_error, _}, state), do: {:stop, :normal, state}
 end
