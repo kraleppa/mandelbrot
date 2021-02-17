@@ -22,6 +22,7 @@ defmodule Mandelbrot.Tcp.TcpConnector do
   def handle_info({:tcp, _socket, data}, listenSocket) do
     Logger.info "Received #{data}"
 
+
     {:noreply, listenSocket}
   end
 end
