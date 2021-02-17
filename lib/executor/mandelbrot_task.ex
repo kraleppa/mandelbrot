@@ -1,10 +1,9 @@
 defmodule Mandelbrot.Executor.MandelbrotTask do
-  def execute_task(points) do
+  def execute_task(points, socket) do
+    # :timer.sleep(5000)
     results = Enum.map(points, &process_point(&1)) |>
       Enum.map(&parse_tuple(&1))
-    {:ok, file} = File.open("results.txt", [:append])
-    :timer.sleep(5000)
-    IO.write(file, results)
+    :gen_tcp.send(socket, results)
   end
 
   defp parse_tuple({x, y, z}) do
