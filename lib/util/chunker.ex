@@ -1,5 +1,7 @@
 defmodule Mandelbrot.Util.Chunker do
-  def chunk(list, parts), do: do_chunk(list, parts, [])
+  def chunk(list, parts) do
+    Enum.shuffle(list) |> do_chunk(parts, [])
+  end
 
   defp do_chunk(_, 0, chunks), do: chunks
 
