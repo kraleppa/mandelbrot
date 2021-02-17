@@ -19,9 +19,9 @@ defmodule Mandelbrot.Tcp.TcpConnector do
     {:noreply, listenSocket}
   end
 
-  def handle_info({:tcp, _socket, data}, listenSocket) do
+  def handle_info({:tcp, socket, data}, listenSocket) do
     Logger.info "Received #{data}"
-
+    Mandelbrot.Executor.Scheduler.start_task({800, 600, 4}, socket)
 
     {:noreply, listenSocket}
   end

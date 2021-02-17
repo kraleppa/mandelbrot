@@ -11,24 +11,27 @@ defmodule Mandelbrot.Executor.Scheduler do
     {:ok, state}
   end
 
-  def handle_cast({:start_task, width, height, number_of_processes}, state) do
-    points = (for x <- 1..width-1, y <- 1..height-1, do: {x, y})
-      |> Chunker.chunk(number_of_processes)
-    run_tasks(points)
+  def handle_cast({:start_task, settings, socket}, state) do
+    run_tasks(split_points(settings), socket)
     {:noreply, state}
   end
 
-  defp run_tasks([]) do
+  defp run_tasks([], _) do
     :ok
   end
 
-  defp run_tasks([head | tail]) do
+  defp run_tasks([head | tail], socket) do
     Task.Supervisor.start_child(Executor.TaskSupervisor,
-      fn -> Executor.MandelbrotTask.execute_task(head) end)
-    run_tasks(tail)
+      fn -> Executor.MandelbrotTask.execute_task(head, socket) end)
+    run_tasks(tail, socket)
   end
 
-  def start_task(width, height, number_of_processes) do
-    GenServer.cast(__MODULE__, {:start_task, width, height, number_of_processes})
+  defp split_points({width, height, number_of_processes}) do
+    (for x <- 1..width-1, y <- 1..height-1, do: {x, y})
+      |> Chunker.chunk(number_of_processes)
+  end
+
+  def start_task(settings, socket) do
+    GenServer.cast(__MODULE__, {:start_task, settings, socket})
   end
 end
